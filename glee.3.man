@@ -1,0 +1,79 @@
+.TH man 3 "$BUILD_DATE" "$VERSION" "espace man page"
+
+.SH NAME
+espace \- Error Space
+
+.SH SYNOPSIS
+.nf
+#include <espace/error.h>
+.sp
+
+// macros
+ESPACE_ERRDEC(err_name);
+ESPACE_ERRDEF(err_name);
+
+// global, thread-local variables
+struct espace_error * espace;
+
+// functions
+void espace_raise(const struct espace_error * state);
+bool espace_check(void);
+bool espace_catch(const struct espace_error * error);
+void espace_clear(void);
+void espace_perror(const struct espace_error * error);
+
+.SH DESCRIPTION
+.B
+ESPACE_ERRDEC() 
+declares ERROR in header files.
+.B
+ESPACE_ERRDEF() 
+defines ERROR in source files.
+
+.B
+espace 
+variable is ERROR_STATE.
+
+.B
+espace_raise(), espace_check(), espace_catch()
+and 
+.B
+espace_clear() 
+are uses to raise, check, catch and clear ERROR_STATE. 
+
+.B
+espace_perror() 
+is uses to print ERROR_IDENTITY_NAME to stderr.
+
+For more detail about concepts and manual, see
+"/usr/share/doc/espace/index.txt".
+
+.SH EXAMPLES
+See /usr/share/doc/espace/example/**/*.c
+
+.SH FILES
+.TP 4
+/usr/lib/libespace.so
+Dynamic library
+
+.TP
+/usr/include/espace/*.h
+Header files.
+
+.TP
+/usr/share/man/man3/espace.3.gz
+Manunal file.
+
+.TP
+/usr/share/doc/espace/*.txt
+Document files.
+
+.TP
+/usr/share/doc/espace/example/**/*.c
+Example files.
+
+.SH REFERENCES 
+Development repository at https://github.com/kevin-leptons/espace
+
+.SH AUTHORS
+Kevin Leptons <kevin.leptons@gmail.com>

@@ -1,0 +1,9 @@
+/dest/
+/dist/
+/tmp/
+/test/
+
+*.swp
+*.swpc
+
+core
