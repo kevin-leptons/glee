@@ -89,18 +89,16 @@ std::unordered_set<std::string> _media_ext = {
         ".f4b",         // same as f4v
 };
 
-void api::scan_by_dir_ids(std::vector<size_t> dir_ids)
+void api::scan_by_dir_id(size_t dir_id)
 {
         glee::media_dir media_dir;
 
-        for (auto it = dir_ids.begin(); it != dir_ids.end(); ++it) {
-                media_dir = _media_dir_table.find_by_id(*it);
-                _media_file_table.del_by_dir_id(media_dir.id);
-                _scan_directory(media_dir.id, media_dir.path);
-        }
+        media_dir = _media_dir_table.find_by_id(dir_id);
+        _media_file_table.del_by_dir_id(media_dir.id);
+        _scan_directory(media_dir.id, media_dir.path);
 }
 
-void api::show_media_file(size_t identity)
+void api::play_media_file(size_t identity)
 {
         media_file media_file;
         boost::filesystem::path file_path;
@@ -108,7 +106,9 @@ void api::show_media_file(size_t identity)
 
         media_file = _media_file_table.find_by_id(identity);
         file_path = media_file.dir_path /= media_file.file_name;
-        boost::process::spawn(exec, file_path,
+        boost::process::system(exec, file_path, "--started-from-file",
+                              "--qt-start-minimized", "--qt-notification=0",
+                              "vlc://quit",
                               boost::process::std_out > boost::process::null,
                               boost::process::std_in < boost::process::null,
                               boost::process::std_err > boost::process::null);

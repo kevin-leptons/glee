@@ -21,10 +21,6 @@ if(Boost_FOUND)
 endif()
 set(SQLITE_LIBRARIES "sqlite3")
 
-find_package(PkgConfig REQUIRED)
-pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
-include_directories(${GTK3_INCLUDE_DIRS})
-
 # setup header files
 include_directories(include)
 

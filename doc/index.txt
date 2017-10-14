@@ -1,0 +1,397 @@
+OVERVIEW
+========
+
+    ESPACE defines and supports to deal with problem: "How to handle errors in
+    C language?". This is ESPACE's user manual. To understand that, look for:
+    
+        Sections 01 - 05: Related concepts
+        Sections 06 - 14: User manual for ESPACE 
+        Sections 15 - 17: Rules
+        Section 18: Example
+
+    Sept, 2017
+    Kevin Leptons <kevin.leptons@gmail.com>
+
+TABLE OF CONTENTS
+=================
+
+    01. ERROR
+    02. ERROR_IDENTITY, ERROR_IDENTITY_NAME
+    03. ERROR_STATE
+    04. ERROR_RAISING, ERROR_CHECKING
+    05. ERROR_CATCHING, ERROR_CLEARING
+    06. ERROR_SPACE
+    07. ESPACE: Overview
+    08. ESPACE: ERROR_STATE
+    09. ESPACE: ERROR_DEFINITION
+    10. ESPACE: ERROR_RAISING, ERROR_CHECKING
+    11. ESPACE: ERROR_CATCHING, ERROR_CLEARING
+    12. ESPACE: Display ERROR
+    13. ESPACE: ERROR_COMPATIBLE
+    14. ESPACE: SYSTEM_ERROR_COMPATIBLE
+    15. ESPACE: RULE_1
+    16. ESPACE: RULE_2
+    17. ESPACE: RULE_3
+    18. Example
+
+01. ERROR
+=========
+
+    ERROR is situations which cause function can not complete. For example:
+
+        - Divide a number for zero
+        - Allocate memory block when system memory is full...
+        - ...
+
+02. ERROR_IDENTITY, ERROR_IDENTITY_NAME
+=======================================
+
+    ERROR_IDENTITY is unique information presents for ERROR. 
+    ERROR_IDENTITY_NAME also is unique information presents for ERROR, but it
+    is easy to read than ERROR_IDENTITY. For example, Linux Error defnition
+    in file <asm-generic/errno-base.h>:
+
+        #define EPERM 1     // Operation not permitted
+
+    "EPERM" is ERROR_IDENTITY_NAME, "1" is ERROR_IDENTITY.
+
+03. ERROR_STATE
+===============
+
+    It is data storage which uses to store ERROR_IDENTITY to
+    show "What is ERROR occurs?". For example:
+
+        struct error_state error_state;     // error_state is ERROR_STATE
+                                            // struct error_state is type
+
+04. ERROR_RAISING, ERROR_CHECKING 
+=================================
+
+    ERROR_RAISING is setting ERROR_STATE to a ERROR_IDENTITY to show:
+    
+        - What is ERROR occurs?
+        - That ERROR can't be handle by current function
+
+    For example:
+    
+        error_state = LIBA_E001
+
+    ERROR_CHECKING is checking ERROR_STATE to know:
+
+        - Has ERROR occurs?
+
+    For example:
+
+        if (error_state != NULL) {
+            // if error has occur then do somthing
+        }
+
+05. ERROR_CATCHING, ERROR_CLEARING
+==================================
+
+    ERROR_CATCHING is checking ERROR_STATE to know:
+
+        - Specific ERROR has occurs?
+
+    For example:
+
+        if (error_sate == LIBA_E001) {
+            // if LIBA_E001 has been occur then do something
+        }
+
+    ERROR_CLEARING is setting ERROR_STATE to none-ERROR_IDENTITY.
+    non-ERROR_IDENTITY is special ERROR_IDENTITY, that mean is no ERROR
+    occurs. For example:
+
+        error_sate = ENONE;
+        
+06. ERROR_SPACE
+===============
+
+    It is ERROR_STATE in THREADING. Notation:
+
+        P = {THREADING, ERROR_STATE}    
+
+    THREADING is multi-threading concept. For detail, see:
+    https://en.wikipedia.org/wiki/Multithreading_(computer_architecture). If
+    multi-threading is not used, consider that process contains one threading.
+
+    Each THREADING use a ERROR_STATE. It guarantees that ERROR_RAISING,
+    ERROR_CHECKING, ERROR_CATCHING and ERROR_CLEARING in a THREADING doesn't
+    cause mistake to other THREADING.
+
+07. ESPACE: Overview
+====================
+
+    ESPACE provides complete methods to define, raise, catch and clear ERROR.
+    Here is work flow which is you need to do to use ESPACE:
+
+        - Declare ERROR in header file by ESPACE_ERRDEC() macro
+        - Define ERROR in source file by ESPCE_ERRDEF() macro
+        - Use functions: espace_raise(), espace_iserror(), espace_clear()
+          to raise, catch or clear ERROR
+    
+    ERROR_STATE is pre-defined and auto-creating for each THREADING, don't
+    worry about that, just use functions above. All of steps are show next
+    sections.
+
+08. ESPACE: ERROR_STATE
+=======================
+
+    ESPACE's ERROR_STATE is defined by "espace". It is global, thread-local
+    variable:
+
+        struct espace_error * espace;
+    
+    That variable can be access directly, For example:
+
+        espace = LIBA_E001;                 // assign to ERROR_IDENTITY
+        printf("Error: %s\n", espace->id);  // read ERROR_IDENTITY
+
+09. ESPACE: ERROR_DEFINITION
+============================
+
+    ERROR_DEFINITION is:
+    
+        - Define ERROR_IDENTITY and corresponding ERROR_IDENTITY_NAME
+        - Describe ERROR_IDENTITY in documents
+
+    For example:
+
+        // header file
+        #inlcude <espace/error.h>
+
+        ESPACE_ERRDEC(LIBA_E001);
+        ESPACE_ERRDEC(LIBA_E002);
+        ESPACE_ERRDEC(LIBA_E003);
+
+        // source file
+        ESPACE_ERRDEF(LIBA_E001)
+        ESPACE_ERRDEF(LIBA_E002)
+        ESPACE_ERRDEF(LIBA_E003)
+
+        // documents
+        LIBA_E001: Occurs when ....
+        LIBA_E002: Occurs when ....
+        LIBA_E003: Occurs when ....
+
+10. ESPACE: ERROR_RAISING, ERROR_CHECKING
+=========================================
+
+    ESPACE supports above actions in corresponding functions:
+
+        - ERROR_RAISING: espace_raise()
+        - ERROR_CHECKING: espace_check()
+
+    For example:
+
+        #include <espace/error.h>
+
+        espace_raise(LIBA_E001);
+        if (espace_check()) {
+            // ERROR has occurs
+        }
+
+11. ESPACE: ERROR_CATCHING, ERROR_CLEARING
+==========================================
+
+    ESPACE support above actions in corresponding functions:
+
+        - ERROR_CATCHING: espace_catch()
+        - ERROR_CLEARING: espace_clear()
+
+    For example:
+
+        #include <espace/error.h>
+
+        if (espace_catch(LIBA_E001)) {
+            // do something to handle
+            // then clear ERROR
+            espace_clear();
+        }
+
+12. ESPACE: Display ERROR
+=========================
+
+    espace_peror() display ERROR_IDENTITY to stderr. For example:
+
+        espace_peror(LIBA_E001);                // ouput is "LIBA_E001"
+
+    Use "name" property of ERROR for flexible ouput format. For example:
+
+        printf("Error: %s\n", LIBA_E001->id);   // print ERROR_IDENTITY_NAME
+                                                // of LIBA_E001
+
+        printf("Error: %s\b", espace->id);      // printf ERROR_IDENTITY_NAME
+                                                // of current ERROR
+
+13. ESPACE: ERROR_COMPATIBLE
+============================
+
+    If your code use ESPACE to handle ERROR and some dependency libraries use
+    other methods than ESPACE to handle ERROR then you need a solution.
+    Simple solution is define ESPACE's ERROR base on original ERROR of that
+    libraries. For example:
+
+        // original error
+        #define EPERM 1
+
+        // ESPACE's ERROR in header file
+        #include <espace/error.h>
+        ESPACE_ERRDEC(SYS_EPERM)
+        void sys_raise(int errnum);
+
+        // ESPACE's ERROR in source file
+        #include <signal.h>
+        
+        ESPACE_ERRDEF(SYS_EPERM)
+        #define SYS_ERRSIZE 1
+        const struct espace_error * const SYS_ERR[SYS_ERRSIZE] = {
+            &_SYS_EPERM
+        };
+        inline void sys_raise(int errnum) {
+            if (errnum <= || errnum >= SYS_ERRSIZE)
+                raise(SIGSEGV);
+            else
+                return SYS_ERR[errnum - 1];
+        }
+
+    Then, if you need to raise error, catch or clear:
+
+        // catch system error and raise as ESPACE's error
+        if (errno != 0)
+            sys_raise(errno);
+
+        // catch ESPACE's somewhere
+        if (espace_catch(SYS_EPERM)) {
+            // do something to handle
+            // then clear error
+            espace_clear();
+        }
+
+14. ESPACE: SYSTEM_ERROR_COMPATIBLE
+===================================
+
+    ESPACE provides pre-defined System Error in <espace/sys.h> because System
+    Error is offen using. That header exposes re-defined 133 Linux ERROR and
+    ERROR_RAISING function:
+
+        #incluce <espace/sys.h>
+
+        void sys_raise(int errnum);
+
+    For example:
+
+        #incluce <espace/sys.h>
+        #include <errno.h>
+
+        // catch system error and raise as ESPACE's error
+        if (errno != 0)
+            sys_raise(EPERM);
+
+        // catch ESPACE's error somewhere
+        if (espace_catch(SYS_EPERM)) {
+            // do something to handle
+            // then clear error
+            espace_clear();
+        }
+
+15. ESPACE: RULE_1
+==================
+
+    Name ERROR_IDENTITY_NAME follow pattern:
+
+        ^([A-Z][A-Z0-9]{0,7})_(E[A-Z0-9]{1,15})$
+
+    First block is name of library. Second block is abbreviation of ERROR's
+    name. For example:
+
+    GOOD_WAY:
+
+        LIBA_E001
+        LIBA_EABCXYZ
+        LIBA_EXXXYYY
+
+    BAD_WAY:
+
+        LIBA_B001
+        LIB_A_E001
+        _LIBA_E001
+        _1LIBA_E001
+
+16. ESPACE: RULE_2
+==================
+
+    "Define ERROR_IDENTITY for ERROR group which is same meaning."
+    
+    That way help error handling become more simple and reduce size of
+    program.
+
+    GOOD_WAY:
+
+        ESPACE_ERRDEC(LIBA_ENOITEM);        // use only ERROR_IDENTITY 
+                                            // for ERROR cases:
+                                            // not found item in something
+
+    BAD_WAY:
+
+        ESPACE_ERRDEC(LIBA_EMAPNOITEM);     // use this ERROR_IDENTITY for
+                                            // ERROR case: 
+                                            // not found item in map
+
+        ESPACE_ERRDEC(LIBA_EHTABLENOITEM);  // use this ERROR_IDENTITY for
+                                            // ERROR case: 
+                                            // not found item in hash table
+17. ESPACE: RULE_3
+==================
+
+    "Clear ERROR_STATE after handling ERROR".
+
+    GOOD_WAY:
+
+        int liba_fn(void) {
+            if (espace_catch(LIBB_E001)) {
+                if (/*handling is not success*/)
+                    return -1;
+                 espace_clear();    // handling is success
+                                    // clear error to show that error was
+                                    // handle and no error now
+            }
+        }
+
+    BAD_WAY:
+
+        int liba_fn(void) {
+            if (espace_catch(LIBB_E001)) {
+                if (/*handling is not success*/)
+                    return -1;
+                // handling is success
+                // if don't clear error, next function calls may be mistake 
+                // and program run into undefined behaviors
+            }
+        }
+
+
+18. Example
+===========
+
+    Example is install in </usr/share/doc/example> by structure:
+
+        /usr/share/doc/example
+            |-inc
+            |   |-*.h
+            |
+            |-lib
+            |   |-*.c
+            |
+            |-src
+            |   |-*.c
+
+    Where:
+
+        - <inc> contains header files which declare ERROR.
+        - <lib> contains library's source files which define ERROR for all of
+          example.
+        - <src> contains example source files.
+
+    It doesn't provides building instruction. It is just for read to do.

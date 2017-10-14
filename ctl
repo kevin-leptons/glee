@@ -16,14 +16,15 @@
 # bash options
 set -e
 
+NAME="glee"
+VERSION="0.1.0"
 ROOT=$(realpath .)
 INC="$ROOT/include"
 SRC="$ROOT/src"
 DEST="$ROOT/dest"
-DEST_MAN="$DEST/man/glee.3.gz"
+DEST_MAN="$DEST/man/$NAME.3.gz"
 DIST="$ROOT/dist"
-DIST_PKG="$DIST/glee"
-VERSION="0.1.0"
+DIST_PKG="$DIST/$NAME"
 
 # help menu
 HELP="USAGE\n
@@ -52,7 +53,7 @@ ctl_build()
 
     # man page
     mkdir -vp $(dirname $DEST_MAN)
-    cp $ROOT/glee.3.man $DEST_MAN
+    cp $ROOT/$NAME.3.man $DEST_MAN
     sed -i "s/\$BUILD_DATE/$(date)/g" $DEST_MAN
     sed -i "s/\$VERSION/$VERSION/g" $DEST_MAN
 }
@@ -66,6 +67,7 @@ ctl_dist()
     rm -rf $DIST 
     mkdir -vp $DIST_PKG
     cp -r debian $DIST_PKG/DEBIAN
+    sed -i "s/\$NAME/$NAME/g" $DIST_PKG/DEBIAN/control
     sed -i "s/\$VERSION/$VERSION/g" $DIST_PKG/DEBIAN/control
 
     cd $DEST
@@ -74,16 +76,9 @@ ctl_dist()
     mkdir -vp $DIST_PKG/usr/share/man/man3
     cp $DEST_MAN $DIST_PKG/usr/share/man/man3
 
-    local DIST_DOC="$DIST_PKG/usr/share/doc/glee"
-    local DIST_DOC_EXAM="$DIST_DOC/example"
-    mkdir -vp $DIST_DOC_EXAM 
-    mkdir -vp $DIST_DOC_EXAM/inc 
-    mkdir -vp $DIST_DOC_EXAM/lib
-    mkdir -vp $DIST_DOC_EXAM/src
+    local DIST_DOC="$DIST_PKG/usr/share/doc/$NAME"
+    mkdir -vp $DIST_DOC
     cp $ROOT/doc/*.txt $DIST_DOC
-    cp $INC/example/*.h $DIST_DOC_EXAM/inc
-    cp $SRC/examlib/*.c $DIST_DOC_EXAM/lib
-    cp $SRC/example/*.c $DIST_DOC_EXAM/src
 
     cd $DIST
     dpkg-deb --build -D $DIST_PKG $DIST
