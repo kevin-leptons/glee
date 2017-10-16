@@ -1,79 +1,61 @@
-.TH man 3 "$BUILD_DATE" "$VERSION" "espace man page"
+.TH man 3 "$BUILD_DATE" "$VERSION" "glee man page"
 
 .SH NAME
-espace \- Error Space
+glee \- media file player
 
 .SH SYNOPSIS
 .nf
-#include <espace/error.h>
+glee_dir add PATH_TO_DIRECTORY
+glee_dir list [--keyword, -k KEYWORD] [--page, -p PAGE]
+glee_dir scan DIRECTORY_ID
+glee_dir del DIRECTORY_ID
+
+glee_file list [--keyword, -k KEYWORD] [--page, -p PAGE]
+glee_file play FILE_ID
+
+glee_master play [--keyword, -k KEYWORD] [--limit, -p LIMIT]
 .sp
-
-// macros
-ESPACE_ERRDEC(err_name);
-ESPACE_ERRDEF(err_name);
-
-// global, thread-local variables
-struct espace_error * espace;
-
-// functions
-void espace_raise(const struct espace_error * state);
-bool espace_check(void);
-bool espace_catch(const struct espace_error * error);
-void espace_clear(void);
-void espace_perror(const struct espace_error * error);
 
 .SH DESCRIPTION
 .B
-ESPACE_ERRDEC() 
-declares ERROR in header files.
-.B
-ESPACE_ERRDEF() 
-defines ERROR in source files.
+glee_dir
+is use to manage media directory by adding, scanning or deleting a directory
+from database.
 
 .B
-espace 
-variable is ERROR_STATE.
+glee_file
+is use to retrieve files which indexed by
+.B
+glee_dir
+and play specific media file by VLC.
 
 .B
-espace_raise(), espace_check(), espace_catch()
-and 
-.B
-espace_clear() 
-are uses to raise, check, catch and clear ERROR_STATE. 
-
-.B
-espace_perror() 
-is uses to print ERROR_IDENTITY_NAME to stderr.
-
-For more detail about concepts and manual, see
-"/usr/share/doc/espace/index.txt".
+glee_master
+is use to auto play media files in case you do something and want to glee
+chooses media files.
 
 .SH EXAMPLES
-See /usr/share/doc/espace/example/**/*.c
+See /usr/share/doc/glee/usage.txt
 
 .SH FILES
 .TP 4
-/usr/lib/libespace.so
-Dynamic library
+/usr/lib/libglee_*.so
+Dynamic library of glee.
 
 .TP
-/usr/include/espace/*.h
-Header files.
+/usr/bin/glee_*
+Executable file of glee.
 
 .TP
-/usr/share/man/man3/espace.3.gz
-Manunal file.
+/usr/share/man/man3/glee.3.gz
+Manual file.
 
 .TP
-/usr/share/doc/espace/*.txt
+/usr/share/doc/glee/*.txt
 Document files.
 
-.TP
-/usr/share/doc/espace/example/**/*.c
-Example files.
-
 .SH REFERENCES 
-Development repository at https://github.com/kevin-leptons/espace
+Development repository at https://github.com/kevin-leptons/glee
 
 .SH AUTHORS
 Kevin Leptons <kevin.leptons@gmail.com>

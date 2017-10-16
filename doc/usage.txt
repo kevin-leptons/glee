@@ -1,0 +1,88 @@
+USAGE
+=====
+
+        Usage Document for <glee>
+
+TUTORIAL
+========
+
+        Assume that you have directory contains media files as below:
+
+                |- /mnt/resources/sound
+                |       |
+                |       |_ u_cant_touch_this.mc_hammer.mp3
+                |       |- ice_ice_baby.vanila_ice.flac
+                |       |- despacito.luis_fonsi_ft_daddy_yankee.mp4
+                |       |- ...
+                |- ...
+
+        Add directory and scan it 
+
+                $ glee_dir add /mnt/resources/sound
+                $ glee_dir list
+                #1 /mnt/resources/sound
+                $ glee_dir scan 1
+                Scan /mnt/resources/sound ...
+
+        Show files which indexed
+
+                $ glee_file list
+                #1 u_cant_touch_this.mc_hammer.mp3
+                #2 ice_ice_baby.vanila_ice.flac
+                #3 despacito.luis_fonsi_ft_daddy_yankee.mp4
+                ...
+
+        Or search files by keyword an page number
+
+                $ glee_file list -k hammer -p 1
+                #1 u_cant_touch_this.mc_hammer.mp3
+
+        Play media file
+
+                $ glee_file play 1
+                Play: #1 u_cant_touch_this.mp3
+
+        If your directory contains many files, try play by keyword
+
+                $ glee_master play -k mc_hammer
+                #1 u_cant_touch_this.mp3
+
+        For full Usage Document, see ./doc/usage.txt
+
+GLEE_DIR
+========
+
+        Add a directory
+
+                $ glee_dir add PATH_TO_DIRECTORY
+
+        Show directories which added
+
+                $ glee_dir list [--keyword, -k KEYWORD] [--page, -p PAGE]
+
+        Scan media files in directory and add that files to database
+
+                $ glee_dir scan DIRECTORY_ID
+
+        Remove directory, it mean that remove all of files which indexed
+        in that directory
+
+                $ glee_dir dle DIRECTORY_ID
+
+GLEE_FILE
+=========
+
+        Search media files which indexed
+
+                $ glee_file list [--keyword, -k KEYWORD] [--page, -p PAGE]
+
+        Play media file in VLC
+
+                $ glee_file play MEDIA_FILE_ID
+
+GLEE_MASTER
+===========
+
+        Play media file automatically
+
+                $ glee_master play [--keyword, -k KEYWORD] [--limit, -l LIMIT]

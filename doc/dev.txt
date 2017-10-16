@@ -1,0 +1,79 @@
+DEVELOPMENT
+===========
+
+        Development Document for <glee>.
+
+INSTALL
+=======
+
+        Get <glee> source code from here:
+
+                https://github.com/kevin-leptons/glee
+
+        Get CMake v3.9 from here:
+
+                https://cmake.org/files/v3.9/
+
+        Get Boost v1.65.1 and build follow instructions from here:
+
+                http://www.boost.org/users/history/version_1_65_0.html
+
+        Get VLC from here:
+
+                https://www.videolan.org/vlc/
+
+        Chose C++ compiler which supports C++11, depend on your platform.
+        If you are on GNU/Linux, try search and install gcc package.
+        On other platforms, let up your ass and search Google.
+
+        If you are in Debian, you can download pre-build CMake, Boost in
+        REFERENCES section and install VLC follow:
+
+                $ dpkg -i cmake_3.9.4_all.deb
+                $ dpkg -i libboost_1.65.1_all.deb
+                $ apt-get install vlc
+
+BUILDING
+========
+
+        Here are building prototype on Bash, you can do this on other
+        environments by replace <make> by specific build tool generator,
+        such as <nmake> on Windows, etc...
+
+                $ cd glee
+                $ mkdir dest
+                $ cd dest
+                $ cmake ..
+                $ make
+
+        After that libraries files is put into <./dest/lib> and executable
+        files is put into <./dest/bin>.
+
+        If you are in GNU/Linux platform, you can do building in simple way:
+
+                $ ./ctl build           # build
+                $ ./ctl clear           # clear building files
+                $ ./ctl dist            # pack glee into Debian package file
+                                        # work on Debian only
+                                        # distribution file is put into
+                                        # ./dist/glee_<version>_all.deb
+COMPONENTS
+==========
+
+        <./src/glee_core> contains main logic of <glee>.
+
+        <./src/glee_cmd> is library for <glee> command line tools.
+
+        <./src/exe> is executable source files, each file is one executable.
+
+REFERENCE
+=========
+
+        CMake v3.9 pre-build on Debian 9
+        https://drive.google.com/open?id=0B6Eqm2oY7b1vdEN4U2pVZDU0UVE
+
+        Boost v1.65.1 pre-build on Debian 9
+        https://drive.google.com/open?id=0B6Eqm2oY7b1vTmpHNzNZTS1kcFU
+
+        VLC - Video LAN
+        https://www.videolan.org/
